@@ -98,7 +98,13 @@ app.get('/api/users/:_id/logs', async (req, res) => {
 
     let exercises = await Exercise.find(query)
       .limit(limit ? parseInt(limit) : null)
-      .select('-_id description duration date');
+      .select('-_id description duration date')
+      .lean();
+
+    exercises = exercises.map(exercise => ({
+      ...exercise,
+      date: new Date(exercise.date).toDateString()
+    }));
 
     res.json({
       _id: user._id,
